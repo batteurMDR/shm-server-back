@@ -1,8 +1,10 @@
 // IMPORT 
 var express = require('express'),
     path = require('path'),
+    fs = require('fs'),
     app = express()
-    front = express(),
+http = require('http'),
+    url = require('url'),
     mongoose = require('mongoose'),
     cors = require('cors'),
     Group = require('./api/models/groupModel'),
@@ -14,12 +16,30 @@ var express = require('express'),
     jwt = require('jsonwebtoken'),
     bcrypt = require('bcryptjs'),
     config = require('./config')
-    port = config.port;
+port = config.port;
 
+const mimeType = {
+    '.ico': 'image/x-icon',
+    '.html': 'text/html',
+    '.js': 'text/javascript',
+    '.json': 'application/json',
+    '.css': 'text/css',
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.wav': 'audio/wav',
+    '.mp3': 'audio/mpeg',
+    '.svg': 'image/svg+xml',
+    '.pdf': 'application/pdf',
+    '.doc': 'application/msword',
+    '.eot': 'appliaction/vnd.ms-fontobject',
+    '.ttf': 'aplication/font-sfnt'
+};
 
 // DB CONNECTION
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/'+config.dbName, { useNewUrlParser: true });
+mongoose.connect('mongodb://localhost/' + config.dbName, {
+    useNewUrlParser: true
+});
 
 
 // EXPRESS MIDDLEWARE
@@ -45,19 +65,44 @@ logRoutes(app);
 
 // LISTEN ON PORT
 app.listen(port);
-front.listen(80);
 
 
 // SEND 404 IF ROUTE DOESN'T EXIST
-app.use(function(req, res) {
+app.use(function (req, res) {
     res.status(404).send({
         url: req.originalUrl + ' not found'
     })
 });
 
 // RETURN WEB INTERFACE
-front.use(express.static('public'));
+http.createServer(function (req, res) {
+    console.log(`${req.method} ${req.url}`);
+    const parsedUrl = url.parse(req.url);
+
+    const sanitizePath = path.normalize(parsedUrl.pathname).replace(/^(\.\.[\/\\])+/, '');
+    let pathname = path.join(path.join(__dirname,'public'), sanitizePath);
+    fs.exists(pathname, function (exist) {
+        if (!exist) {
+            pathname = path.join(__dirname,'public/');
+        }
+
+        if (fs.statSync(pathname).isDirectory()) {
+            pathname += 'index.html';
+        }
+        
+        fs.readFile(pathname, function (err, data) {
+            if (err) {
+                res.statusCode = 500;
+                res.end(`Error getting the file: ${err}.`);
+            } else {
+                const ext = path.parse(pathname).ext;
+                res.setHeader('Content-type', mimeType[ext] || 'text/plain');
+                res.end(data);
+            }
+        });
+    });
+}).listen(80);
 
 // LOG PORTS
 console.log('SHM RESTful API server started on: ' + port);
-console.log('SHM web server started on: 8080');
+console.log('SHM web server started on: 80');
