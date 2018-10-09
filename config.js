@@ -1,6 +1,6 @@
 module.exports = {
     'secret' : '123ShM',
-    'port' : 4444,
-    'defaultGroup' : '5bbc77e52d12bc0a0de5b0c4',
+    'port' : 8888,
+    'defaultGroup' : '5bbca199e011fe10a91df3ed',
     'dbName' : 'SHM'
 };
