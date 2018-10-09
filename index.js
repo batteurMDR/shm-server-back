@@ -45,7 +45,7 @@ logRoutes(app);
 
 // LISTEN ON PORT
 app.listen(port);
-front.listen(8080);
+front.listen(80);
 
 
 // SEND 404 IF ROUTE DOESN'T EXIST
