@@ -1,5 +1,5 @@
 'use strict';
-var config = require('./config'),
+var config = require('../../config'),
     mongoose = require('mongoose'),
     io = require('socket.io')((config.port+1)),
     State = mongoose.model('States'),
