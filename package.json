@@ -1,5 +1,5 @@
 {
-    "name": "hyperviseur",
+    "name": "shm-server-back",
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
