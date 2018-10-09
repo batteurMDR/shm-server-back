@@ -4,7 +4,10 @@ var process = require('process'),
     Group = require('./api/models/groupModel'),
     User = require('./api/models/userModel'),
     Input = require('prompt-input'),
-    bcrypt = require('bcryptjs');
+    bcrypt = require('bcryptjs'),
+    {
+        exec
+    } = require('child_process');
 
 var db = new Input({
     name: 'db',
@@ -81,7 +84,19 @@ db.ask(function (dbName) {
                                         "export const SOCKET_URL = 'http://" + domainName + ":" + (parseInt(portNumber) + 1) + "/';\n";
                                     fs.writeFile('../shm-server-front/src/constants.js', frontConfig, (err) => {
                                         if (err) throw err;
-                                        process.exit();
+                                        exec('cd ../shm-server-front/ && npm run build', (err, stdout, stderr) => {
+                                            if (err) {
+                                                console.log(err);
+                                            }
+                                            console.log(stdout, stderr);
+                                            exec('cd ../ && cp -r ./shm-server-front/build/ ./shm-server-back/public/', (err, stdout, stderr) => {
+                                                if (err) {
+                                                    console.log(err);
+                                                }
+                                                console.log(stdout, stderr);
+                                                process.exit();
+                                            });
+                                        });
                                     });
                                 });
                             });
