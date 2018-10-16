@@ -92,7 +92,17 @@ db.ask(function (dbName) {
                                                 if (err) {
                                                     console.log(err);
                                                 }
-                                                process.exit();
+                                                exec('cd && pm2 start ./shm/shm-server-back/index.js --name shm-server', (err, stdout, stderr) => {
+                                                    if (err) {
+                                                        console.log(err);
+                                                    }
+                                                    exec('pm2 startup', (err, stdout, stderr) => {
+                                                        if (err) {
+                                                            console.log(err);
+                                                        }
+                                                        process.exit();
+                                                    });
+                                                });
                                             });
                                         });
                                     });
