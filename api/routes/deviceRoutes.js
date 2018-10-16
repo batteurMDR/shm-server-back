@@ -11,6 +11,6 @@ module.exports = function(app) {
 
     app.route('/device/:deviceId')
         .get(VerifyToken, device.read_a_device)
-        .put(device.update_a_device)
+        .put(VerifyToken, device.update_a_device)
         .delete(VerifyToken, device.delete_a_device);
 };
