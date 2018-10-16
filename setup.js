@@ -88,7 +88,7 @@ db.ask(function (dbName) {
                                             if (err) {
                                                 console.log(err);
                                             }
-                                            exec('cd ../ && cp -r ./shm-server-front/build/ ./shm-server-back/public/', (err, stdout, stderr) => {
+                                            exec('cd ../ && cp -r ./shm-server-front/build/* ./shm-server-back/public/', (err, stdout, stderr) => {
                                                 if (err) {
                                                     console.log(err);
                                                 }
